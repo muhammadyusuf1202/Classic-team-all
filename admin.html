@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classic Team | Super Admin</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="./img/ChatGPT Image Jan 14, 2026, 06_28_40 PM.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body { background: #020617; color: white; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
+        .tab-btn.active { background: #22c55e; color: white; border-color: #22c55e; box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
+        .input-style { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 15px; width: 100%; outline: none; transition: 0.3s; color: white; }
+        .input-style:focus { border-color: #22c55e; background: rgba(255,255,255,0.08); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(34, 197, 94, 0.3); border-radius: 10px; }
+        .user-item.active { background: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e; }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        <header class="glass p-6 rounded-[30px] flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center rotate-12 shadow-lg shadow-green-500/20">
+                    <i class="fas fa-user-shield text-xl text-black"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black uppercase italic tracking-tighter">Master <span class="text-green-500">Panel</span></h1>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-[3px]">Abdug'afforov Muhammadyusuf</p>
+                </div>
+            </div>
+            <div class="flex bg-black/40 p-1.5 rounded-2xl border border-white/5">
+                <button onclick="showSection('upload')" id="btn-upload" class="tab-btn active px-6 py-2.5 rounded-xl text-xs font-bold transition-all uppercase">Kontent</button>
+                <button onclick="showSection('chat')" id="btn-chat" class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all uppercase">Messenger</button>
+                <a href="index.html" class="px-6 py-2.5 text-xs font-bold uppercase opacity-50 hover:opacity-100 transition">Sayt</a>
+            </div>
+        </header>
+
+        <main id="section-upload" class="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in duration-500">
+            <div class="lg:col-span-4 glass p-8 rounded-[40px] h-fit space-y-5">
+                <h2 class="text-lg font-bold flex items-center gap-2"><i class="fas fa-plus-circle text-green-500"></i> Yangi qo'shish</h2>
+                <input type="hidden" id="editIndex" value="-1">
+                
+                <div class="space-y-4">
+                    <input type="text" id="vTitle" placeholder="Video sarlavhasi..." class="input-style text-sm">
+                    
+                    <select id="vType" class="input-style text-sm cursor-pointer">
+                        <option value="video">🎞️ Oddiy Video (16:9)</option>
+                        <option value="shorts">📱 Shorts (9:16)</option>
+                    </select>
+
+                    <div class="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl">
+                        <p class="text-[10px] text-blue-400 font-bold uppercase mb-2 italic">Maslahat:</p>
+                        <p class="text-[11px] text-gray-500 leading-relaxed">Cheksiz yuklash uchun videoni Telegram-ga yuklab, linkini shu yerga qo'ying.</p>
+                    </div>
+
+                    <input type="text" id="vUrl" placeholder="Video URL (mp4 yoki YouTube)" class="input-style text-sm">
+                    <input type="text" id="iUrl" placeholder="Muqova rasmi URL (jpg/png)" class="input-style text-sm">
+                </div>
+
+                <button onclick="handleSave()" id="saveBtn" class="w-full bg-green-600 hover:bg-green-500 py-4 rounded-2xl font-bold uppercase text-sm transition-all shadow-xl shadow-green-600/20">
+                    Saqlash
+                </button>
+            </div>
+
+            <div class="lg:col-span-8 glass rounded-[40px] overflow-hidden flex flex-col">
+                <div class="p-6 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                    <h3 class="font-bold uppercase text-sm tracking-widest">Barcha videolar</h3>
+                    <button onclick="exportData()" class="text-[10px] bg-white/5 px-4 py-2 rounded-lg hover:bg-white/10 transition italic">DB Export (.json)</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-black/20 text-[10px] uppercase text-gray-500 font-bold">
+                            <tr>
+                                <th class="p-5">Media</th>
+                                <th class="p-5">Sarlavha</th>
+                                <th class="p-5 text-right">Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminContentList" class="text-sm divide-y divide-white/5">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <main id="section-chat" class="hidden glass rounded-[40px] h-[700px] flex overflow-hidden animate-in slide-in-from-bottom-5 duration-500">
+            <div class="w-80 border-r border-white/5 flex flex-col bg-black/20">
+                <div class="p-6 border-b border-white/5 font-bold text-xs uppercase tracking-widest text-gray-500">Suhbatlar</div>
+                <div id="userList" class="flex-1 overflow-y-auto custom-scrollbar"></div>
+            </div>
+            <div class="flex-1 flex flex-col">
+                <div id="chatHeader" class="p-6 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div id="activeUserAvatar" class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center font-bold italic shadow-lg shadow-green-600/20 text-black">?</div>
+                        <h3 id="activeUserName" class="font-bold text-sm tracking-tight">Foydalanuvchini tanlang</h3>
+                    </div>
+                </div>
+                <div id="adminChatBox" class="flex-1 p-8 overflow-y-auto space-y-4 custom-scrollbar bg-black/10">
+                    <div class="h-full flex flex-col items-center justify-center text-gray-600 opacity-30">
+                        <i class="fas fa-comment-dots text-6xl mb-4"></i>
+                        <p class="text-xs uppercase font-bold tracking-widest">Xabarlar yo'q</p>
+                    </div>
+                </div>
+                <div class="p-6 bg-black/40 border-t border-white/5 flex gap-4">
+                    <input type="text" id="adminReply" placeholder="Xabar yozing..." class="flex-1 bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-green-500 text-sm">
+                    <button onclick="sendAdminReply()" class="bg-green-600 w-14 h-14 rounded-2xl hover:bg-green-500 transition shadow-xl shadow-green-600/20 flex items-center justify-center">
+                        <i class="fas fa-paper-plane text-black"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentChatUser = null;
+        let db = JSON.parse(localStorage.getItem('uploaded_videos') || "[]");
+
+        function showSection(id) {
+            document.getElementById('section-upload').classList.add('hidden');
+            document.getElementById('section-chat').classList.add('hidden');
+            document.getElementById('btn-upload').classList.remove('active');
+            document.getElementById('btn-chat').classList.remove('active');
+            
+            document.getElementById('section-' + id).classList.remove('hidden');
+            document.getElementById('btn-' + id).classList.add('active');
+        }
+
+        // --- KONTENT LOGIKASI ---
+        function renderList() {
+            const list = document.getElementById('adminContentList');
+            list.innerHTML = db.map((item, index) => `
+                <tr class="hover:bg-white/5 transition group">
+                    <td class="p-4 w-24">
+                        <div class="h-14 w-20 rounded-xl overflow-hidden border border-white/10 relative">
+                            <img src="${item.img}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500">
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <p class="font-bold tracking-tight">${item.title}</p>
+                        <span class="text-[9px] uppercase font-black ${item.type === 'shorts' ? 'text-blue-500' : 'text-green-500'} tracking-widest">${item.type}</span>
+                    </td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="editItem(${index})" class="w-9 h-9 bg-orange-500/10 text-orange-500 rounded-lg hover:bg-orange-500 hover:text-white transition"><i class="fas fa-edit text-xs"></i></button>
+                        <button onclick="deleteItem(${index})" class="w-9 h-9 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition"><i class="fas fa-trash text-xs"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function handleSave() {
+            const title = document.getElementById('vTitle').value;
+            const type = document.getElementById('vType').value;
+            const video = document.getElementById('vUrl').value;
+            const img = document.getElementById('iUrl').value;
+            const editIndex = parseInt(document.getElementById('editIndex').value);
+
+            if (!title || !video) return alert("Nom va Link shart!");
+
+            const newContent = { title, type, video, img: img || "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=500" };
+
+            if (editIndex === -1) db.push(newContent);
+            else {
+                db[editIndex] = newContent;
+                document.getElementById('editIndex').value = "-1";
+                document.getElementById('saveBtn').innerText = "Saqlash";
+                document.getElementById('saveBtn').className = document.getElementById('saveBtn').className.replace('bg-orange-600', 'bg-green-600');
+            }
+
+            localStorage.setItem('uploaded_videos', JSON.stringify(db));
+            alert("Bajarildi!");
+            resetForm();
+            renderList();
+        }
+
+        function editItem(i) {
+            const item = db[i];
+            document.getElementById('vTitle').value = item.title;
+            document.getElementById('vType').value = item.type;
+            document.getElementById('vUrl').value = item.video;
+            document.getElementById('iUrl').value = item.img;
+            document.getElementById('editIndex').value = i;
+            document.getElementById('saveBtn').innerText = "O'zgarishni saqlash";
+            document.getElementById('saveBtn').classList.replace('bg-green-600', 'bg-orange-600');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteItem(i) {
+            if(confirm("O'chirilsinmi?")) {
+                db.splice(i, 1);
+                localStorage.setItem('uploaded_videos', JSON.stringify(db));
+                renderList();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('vTitle').value = '';
+            document.getElementById('vUrl').value = '';
+            document.getElementById('iUrl').value = '';
+        }
+
+        // --- MESSENGER LOGIKASI ---
+        function renderUserList() {
+            const chats = JSON.parse(localStorage.getItem('chats') || "[]");
+            const userListDiv = document.getElementById('userList');
+            const users = [...new Set(chats.filter(c => c.user !== 'Admin').map(c => c.user))];
+            
+            userListDiv.innerHTML = users.map(user => `
+                <div onclick="selectUser('${user}')" class="user-item p-5 border-b border-white/5 cursor-pointer hover:bg-white/5 transition ${currentChatUser === user ? 'active' : ''}">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center font-bold text-xs border border-white/10">${user.charAt(0)}</div>
+                        <div class="flex-1 overflow-hidden">
+                            <h4 class="font-bold text-sm truncate">${user}</h4>
+                            <p class="text-[10px] text-gray-500 italic">Chatni ko'rish...</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectUser(user) {
+            currentChatUser = user;
+            document.getElementById('activeUserName').innerText = user;
+            document.getElementById('activeUserAvatar').innerText = user.charAt(0);
+            renderAdminChat();
+            renderUserList();
+        }
+
+        function renderAdminChat() {
+            if (!currentChatUser) return;
+            const box = document.getElementById('adminChatBox');
+            const chats = JSON.parse(localStorage.getItem('chats') || "[]");
+            const filtered = chats.filter(c => c.user === currentChatUser || (c.user === 'Admin' && c.to === currentChatUser));
+
+            box.innerHTML = filtered.map(c => `
+                <div class="max-w-[80%] ${c.user === 'Admin' ? 'ml-auto' : 'mr-auto'}">
+                    <div class="p-4 rounded-3xl shadow-2xl ${c.user === 'Admin' ? 'bg-green-600 text-black rounded-tr-none' : 'bg-white/5 rounded-tl-none border border-white/5'}">
+                        <p class="text-sm">${c.text}</p>
+                        <p class="text-[8px] mt-2 opacity-60 font-bold uppercase tracking-tighter">${c.time}</p>
+                    </div>
+                </div>
+            `).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function sendAdminReply() {
+            const inp = document.getElementById('adminReply');
+            if (!inp.value || !currentChatUser) return;
+            let chats = JSON.parse(localStorage.getItem('chats') || "[]");
+            chats.push({ user: 'Admin', to: currentChatUser, text: inp.value, time: new Date().toLocaleTimeString() });
+            localStorage.setItem('chats', JSON.stringify(chats));
+            inp.value = "";
+            renderAdminChat();
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", "classic_db.json");
+            dl.click();
+        }
+
+        setInterval(() => { renderUserList(); renderAdminChat(); }, 3000);
+        window.onload = () => { renderList(); renderUserList(); };
+    </script>
+</body>
+</html>
